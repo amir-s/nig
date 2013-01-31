@@ -5,8 +5,8 @@ module.exports = new function () {
 		console.log("there");
 	}
     this.index = function(req, res, next, name) {
-		this.gogo();
-        ni.load.view('section/header.ejs', {
+	
+	   ni.load.view('section/header.ejs', {
 											user: {name: name, email: 'amir.s@acm.org'},
 											list: [
 													{item: 'item1', val: 'val1'},
@@ -14,11 +14,16 @@ module.exports = new function () {
 													{item: 'item3', val: 'val3'}
 												  ]
 											}).view('main/main.index.ejs');
-        ni.load.model('a');
+    //    ni.load.model('a');
         ni.end();
     }
     this.ff = function (req, res, next) {
-		res.end("aaa");
+    	var t = 'amir';
+    	if (ni.input.post('name')) {
+    		t = ni.input.post('name');
+    	}
+		ni.load.view('test.ejs', {name: t});
+		ni.end();
     }
     
 };
