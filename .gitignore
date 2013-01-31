@@ -1,0 +1,9 @@
+node_modules/connect
+node_modules/ejs
+node_modules/mongodb
+node_modules/mongojs
+node_modules/quip
+node_modules/socket.io
+node_modules/xtend
+LICENCE
+
