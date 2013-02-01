@@ -22,10 +22,12 @@ module.exports = new function () {
 			t = $.input.post('name');
 			$.model('users').register_user({name: t});
 		}
-		
+		var s = $.lib('semaphore').new_semaphore(1, function () {
+			$.end();
+		});
 		$.model('users').list_users(function (list) {
 			$.view.load('test.ejs', {name: t, list: list});
-			$.end();
+			s.signal();
 		});
 		
 	}
