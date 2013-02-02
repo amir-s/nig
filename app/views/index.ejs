@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TalkBox</title>
+				<link href="{{= site_url("bootstrap/css/bootstrap.min.css") }}" rel="stylesheet" media="screen">
+
+		<script src="{{= site_url("socket.io/socket.io.js") }}"></script>
+		<script src="{{= site_url("js/jquery-1.9.0.min.js") }}"></script>
+		<script src="{{= site_url("bootstrap/js/bootstrap.min.js") }}"></script>
+		
+	</head>
+
+	<style type="text/css">
+
+	body {
+		padding-top: 100px;
+		padding-bottom: 40px;
+		background-color: #f5f5f5;
+	}
+
+	.form-url {
+		max-width: 500px;
+		padding: 19px 29px 29px;
+		margin: 0 auto 20px;
+		background-color: #fff;
+		border: 1px solid #e5e5e5;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	}
+	.form-url .form-url-heading, .form-url .checkbox {
+		margin-bottom: 10px;
+	}
+	.form-url input[type="text"],
+	.form-url input[type="password"] {
+		font-size: 16px;
+		height: auto;
+		margin-bottom: 15px;
+		padding: 7px 9px;
+	}
+
+	</style>
+	<body>
+
+		<div class="container">
+
+			<form id="login" class="form-url">
+				<input id="name" name="name" type="text" class="input-block-level" placeholder="Enter your name here ...">
+				<center><button style="width:50%;" class="btn btn-large btn-primary" type="submit">Let me talk!</button></center>
+			</form>
+			<form style="display:none;" id="talks" class="form-url">
+				<h2 class="form-url-heading">TalkBox!</h2>
+				<textarea id="bangs" style="background: white; height:220px;" class="input-block-level" readonly></textarea>
+				<input id="msg" name="msg" type="text" class="input-block-level" placeholder="Enter MSG here ...">
+				<center><button id="bang" style="width:50%;" class="btn btn-large btn-primary" type="submit">Bang!</button></center>
+			</form>
+
+		</div>
+
+		<script>
+			$(function () {
+				// $("#talks").hide('fast');
+				var socket = io.connect('http://localhost:8082/chat');
+				socket.on('new_bang', function (data) {
+					$("#bangs").val($("#bangs").val()+"\n"+data.name+" says: " + data.bang);
+				});
+				socket.on('new_banger', function (data) {
+					$("#bangs").val($("#bangs").val()+"\n- Welcome " + data.name);
+				});
+				socket.on('left_banger', function (data) {
+					$("#bangs").val($("#bangs").val()+"\n- G'Bye " + data.name);
+				});
+				$("#bang").click(function (e) {
+					e.preventDefault();
+					socket.emit('bang', {msg: $("#msg").val()});
+					$("#msg").val('').focus();
+				});
+				$("#login").submit(function (e) {
+					e.preventDefault();
+					socket.emit('set_name', {name: $("#name").val()});
+					$("#login").slideUp('slow');
+					$("#talks").slideDown('slow', function () {
+						$("#msg").focus();
+					});
+				});
+				$("#name").focus();
+
+			});
+
+		</script>
+
+	</body>
+</html>
